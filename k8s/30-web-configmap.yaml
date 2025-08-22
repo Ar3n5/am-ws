@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: am-web-content
+  namespace: am-web
+data:
+  index.html: |
+    <!doctype html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>AM Webstack</title>
+      <style>
+        body { font-family: system-ui, sans-serif; margin: 2rem; }
+        .card { border: 1px solid #ddd; padding: 1rem; border-radius: 12px; max-width: 640px; }
+        input, button { padding: .5rem .75rem; }
+      </style>
+    </head>
+    <body>
+      <h1>AM Webstack</h1>
+      <div class="card">
+        <p><strong>Container ID:</strong> <span id="cid">…</span></p>
+        <p><strong>Name in DB:</strong> <span id="name">…</span></p>
+        <div>
+          <input id="newName" placeholder="Update name" />
+          <button id="save">Save</button>
+        </div>
+      </div>
+      <script>
+        const api = (p)=> '/api' + p; // ingress will route /api → am-api
+        async function load() {
+          const cid = await fetch(api('/container')).then(r=>r.json());
+          document.getElementById('cid').textContent = cid.container_id;
+          const name = await fetch(api('/name')).then(r=>r.json());
+          document.getElementById('name').textContent = name.name ?? '(empty)';
+        }
+        document.getElementById('save').onclick = async () => {
+          const v = document.getElementById('newName').value;
+          if(!v) return;
+          await fetch(api('/name'), {
+            method:'PUT',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({name:v})
+          });
+          location.reload();
+        };
+        load();
+      </script>
+    </body>
+    </html>

@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: am-tls
+  namespace: am-web
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+spec:
+  secretName: am-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-http01
+  dnsNames:
+    - web2.aronm.xyz
