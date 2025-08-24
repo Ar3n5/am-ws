@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 import os, socket, time
 import psycopg
 
@@ -53,3 +54,6 @@ async def put_name(payload: dict):
             cur.execute("INSERT INTO person(name) VALUES (%s)", (name,))
             conn.commit()
     return {"ok": True}
+
+
+Instrumentator().instrument(app).expose(app, endpoint="/metrics")

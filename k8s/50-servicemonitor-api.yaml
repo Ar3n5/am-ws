@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: am-api
+  namespace: monitoring
+  labels:
+    release: kube-prom   # <- this must match your Prometheus release label
+spec:
+  namespaceSelector:
+    matchNames:
+      - am-web          # where the am-api Service lives
+  selector:
+    matchLabels:
+      app: am-api       # must match .spec.selector of Service am-api
+  endpoints:
+    - port: http        # matches the named port on Service am-api
+      path: /metrics
+      interval: 15s
+      scheme: http
