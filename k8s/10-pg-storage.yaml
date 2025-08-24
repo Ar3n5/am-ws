@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: am-pgdata
   namespace: am-web
+  annotations:
+    argocd.argoproj.io/health-check: ignore
 spec:
   accessModes: [ "ReadWriteOnce" ]
   resources:
